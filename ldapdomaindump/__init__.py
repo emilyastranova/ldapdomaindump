@@ -416,19 +416,6 @@ class domainDumper():
         self.trusts = self.getTrusts()
         rw.generateTrustsReport(self)
         log_success('Domain trusts dumped')
-        log_info('Dumping domain users')
-        self.users = self.getAllUsers()
-        rw.generateUsersReport(self)
-        log_success('Domain users dumped')
-        log_info('Dumping domain groups')
-        self.groups = self.getAllGroups()
-        rw.generateGroupsReport(self)
-        rw.generateUsersByGroupReport(self)
-        log_success('Domain groups dumped')
-        # To save memory, get rid of groups and users
-        self.groups = None
-        self.users = None
-        log_info('Cleared users and groups from memory')
         log_info('Dumping domain computers')
         self.computers = self.getAllComputers()
         if self.config.lookuphostnames:
@@ -436,6 +423,15 @@ class domainDumper():
         rw.generateComputersReport(self)
         rw.generateComputersByOsReport(self)
         log_success('Domain computers dumped')
+        log_info('Dumping domain groups')
+        self.groups = self.getAllGroups()
+        rw.generateGroupsReport(self)
+        log_success('Domain groups dumped')
+        log_info('Dumping domain users')
+        self.users = self.getAllUsers()
+        rw.generateUsersReport(self)
+        rw.generateUsersByGroupReport(self)
+        log_success('Domain users dumped')
 
 class reportWriter():
     def __init__(self, config):
