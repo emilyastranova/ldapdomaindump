@@ -407,21 +407,35 @@ class domainDumper():
 
     #Main function
     def domainDump(self):
+        rw = reportWriter(self.config)
+        log_info('Dumping domain policy')
+        self.policy = self.getDomainPolicy()
+        rw.generatePolicyReport(self)
+        log_success('Domain policy dumped')
+        log_info('Dumping domain trusts')
+        self.trusts = self.getTrusts()
+        rw.generateTrustsReport(self)
+        log_success('Domain trusts dumped')
+        log_info('Dumping domain users')
         self.users = self.getAllUsers()
-        self.computers = self.getAllComputers()
+        rw.generateUsersReport(self)
+        log_success('Domain users dumped')
+        log_info('Dumping domain groups')
         self.groups = self.getAllGroups()
+        rw.generateGroupsReport(self)
+        rw.generateUsersByGroupReport(self)
+        log_success('Domain groups dumped')
+        # To save memory, get rid of groups and users
+        self.groups = None
+        self.users = None
+        log_info('Cleared users and groups from memory')
+        log_info('Dumping domain computers')
+        self.computers = self.getAllComputers()
         if self.config.lookuphostnames:
             self.lookupComputerDnsNames()
-        self.policy = self.getDomainPolicy()
-        self.trusts = self.getTrusts()
-        rw = reportWriter(self.config)
-        rw.generateUsersReport(self)
-        rw.generateGroupsReport(self)
         rw.generateComputersReport(self)
-        rw.generatePolicyReport(self)
-        rw.generateTrustsReport(self)
         rw.generateComputersByOsReport(self)
-        rw.generateUsersByGroupReport(self)
+        log_success('Domain computers dumped')
 
 class reportWriter():
     def __init__(self, config):
@@ -866,6 +880,7 @@ def log_success(text):
     print('[+] %s' % text)
 
 def main():
+    log_info('Emily\'s modified ldapdomaindump')
     parser = argparse.ArgumentParser(description='Domain information dumper via LDAP. Dumps users/computers/groups and OS/membership information to HTML/JSON/greppable output.')
     parser._optionals.title = "Main options"
     parser._positionals.title = "Required options"
